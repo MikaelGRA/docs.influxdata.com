@@ -16,7 +16,7 @@ an alert is specified via a [lambda expression](/kapacitor/v0.2/tick/expr/).
 See [AlertNode.Info,](/kapacitor/v0.2/tick/alert_node/#info) [AlertNode.Warn,](/kapacitor/v0.2/tick/alert_node/#warn) and [AlertNode.Crit](/kapacitor/v0.2/tick/alert_node/#crit) below. 
 
 Different event handlers can be configured for each [AlertNode.](/kapacitor/v0.2/tick/alert_node/) 
-Some handlers like Email, Slack, OpsGenie, VictorOps and PagerDuty have a configuration 
+Some handlers like Email, HipChat, Slack, OpsGenie, VictorOps and PagerDuty have a configuration 
 option &#39;global&#39; that indicates that all alerts implicitly use the handler. 
 
 Available event handlers: 
@@ -25,6 +25,7 @@ Available event handlers:
 * post -- HTTP POST data to a specified URL. 
 * email -- Send and email with alert data. 
 * exec -- Execute a command passing alert data over STDIN. 
+* HipChat -- Post alert message to HipChat room. 
 * Slack -- Post alert message to Slack channel. 
 * OpsGenie -- Send alert to OpsGenie. 
 * VictorOps -- Send alert to VictorOps. 
@@ -165,6 +166,69 @@ state in half of the recorded history, and remained the same in the other half o
 ```javascript
 node.flapping(low float64, high float64)
 ```
+
+
+### HipChat
+
+
+If the &#39;hipchat&#39; section in the configuration has the option: global = true 
+then all alerts are sent to HipChat without the need to explicitly state it 
+in the TICKscript. 
+
+Example: 
+
+
+```javascript
+    [hipchat]
+      enabled = true
+      url = "https://orgname.hipchat.com/v2/room"
+      room = "Test Room"
+      token = "9hiWoDOZ9IbmHsOTeST123ABciWTIqXQVFDo63h9"
+      global = true
+```
+
+Example: 
+
+
+```javascript
+    stream...
+         .alert()
+```
+
+Send alert to HipChat using default room &#39;Test Room&#39;. 
+**NOTE**: The global option for HipChat also implies stateChangesOnly is set on all alerts. 
+Also, the room can either be the room id (numerical) or the room name. 
+
+
+```javascript
+node.hipChat()
+```
+
+Properties of HipChat
+
+#### Room
+
+HipChat room in which to post messages. 
+If empty uses the channel from the configuration. 
+
+
+```javascript
+node.hipChat()
+      .room(value string)
+```
+
+
+#### Token
+
+HipChat authentication token. 
+If empty uses the token from the configuration. 
+
+
+```javascript
+node.hipChat()
+      .token(value string)
+```
+
 
 
 ### History
